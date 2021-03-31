@@ -20,29 +20,31 @@ export type ProviderSymbol = keyof __CONSUMER_PROVIDER_REGISTRY;
 
 export const DefaultProvider: unique symbol = Symbol();
 
-const providers: Record<symbol, () => Consumer["message"]> = {
-  [DefaultProvider]: () => "default"
-};
+const providers: Map<symbol, () => Consumer["message"]> = new Map([
+  [DefaultProvider, () => "default"]
+]);
 
 /**
  * @internal
  * @hidden
  */
 export function registerProvider(sym: ProviderSymbol, provider: () => Consumer["message"]): void {
-  // Cast to any is required because of strange type semantics
-  // around indexing with unique symbols.
-  (providers as any)[sym] = provider;
+  providers.set(sym, provider);
 }
-
-registerProvider(DefaultProvider, () => "default");
 
 export class Consumer {
   private _value: string;
 
   constructor(options?: {provider?: ProviderSymbol}) {
     const sym = options?.provider ?? DefaultProvider;
-    // Cast to any again required
-    this._value = (providers as any)[sym]();
+
+    const provider = providers.get(sym);
+
+    if (provider === undefined) {
+      throw new Error("Invalid provider symbol.");
+    }
+
+    this._value = provider();
   }
 
   public get message(): string {
