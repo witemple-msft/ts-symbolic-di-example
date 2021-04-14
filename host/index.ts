@@ -1,24 +1,17 @@
-import {Consumer, DefaultProvider} from "consumer";
+import "provider";
 
-import {ExternalProvider} from "provider";
+import {Consumer, InjectedProviderClass} from "consumer";
 
 function main() {
-
-  // This first consumer will use the default provider
-  const consumer1 = new Consumer();
-  console.log("Consumer 1 says:", consumer1.message);
-
-  // The second will use the default provider explicitly
-  const consumer2 = new Consumer({
-    provider: DefaultProvider
+  const client = new Consumer({
+    provider: new InjectedProviderClass()
   });
-  console.log("Consumer 2 says:", consumer2.message);
 
-  // The third will use the provider from "provider"
-  const consumer3 = new Consumer({
-    provider: ExternalProvider
-  });
-  console.log("Consumer 3 says:", consumer3.message);
+  console.log("Augmented:", client.num);
+
+  const noOptionsClient = new Consumer();
+
+  console.log("Default:", noOptionsClient.num);
 }
 
 main();
