@@ -1,5 +1,7 @@
+// identity-native
 import "provider";
 
+// identity
 import {Consumer, InjectedProviderClass} from "consumer";
 
 function main() {
